@@ -1,0 +1,25 @@
+{
+  "name": "SWL-LAB CONNECT | กลุ่มงานเทคนิคการแพทย์ รพ.ศรีวิไล",
+  "short_name": "SWL-LAB",
+  "description": "ระบบเชื่อมโยงข้อมูลและบริหารจัดการห้องปฏิบัติการ โรงพยาบาลศรีวิไล",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eaf2fa",
+  "theme_color": "#023e8a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://i.postimg.cc/0NzjtVx3/logo-Web-App-th-t-dt-ngpe-n-PWA.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://i.postimg.cc/0NzjtVx3/logo-Web-App-th-t-dt-ngpe-n-PWA.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
