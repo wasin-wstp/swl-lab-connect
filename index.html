@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-  <title>SWL-LAB CONNECT</title>
+  <title>SWL-LAB CONNECT | กลุ่มงานเทคนิคการแพทย์ รพ.ศรีวิไล</title>
 
-  <!-- ตั้งค่า PWA & โลโก้สำหรับทั้ง Android และ iOS -->
+  <!-- ตั้งค่า PWA & โลโก้สำหรับ Android และ iOS -->
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/png" href="https://i.postimg.cc/0NzjtVx3/logo-Web-App-th-t-dt-ngpe-n-PWA.png">
   <link rel="apple-touch-icon" sizes="180x180" href="https://i.postimg.cc/0NzjtVx3/logo-Web-App-th-t-dt-ngpe-n-PWA.png">
@@ -13,8 +13,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="SWL-LAB">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
+    * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
     html, body {
       margin: 0;
       padding: 0;
@@ -23,28 +25,329 @@
       overflow: hidden;
       background-color: #eaf2fa;
     }
+
     iframe {
       position: fixed;
       inset: 0;
       width: 100%;
       height: 100%;
       border: none;
+      z-index: 1;
+    }
+
+    /* หน้าจอโหลดตอนเปิดแอป (Splash Screen) */
+    .pwa-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: linear-gradient(145deg, #eef5fc 0%, #dbeafe 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+    .pwa-splash.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .pwa-splash img {
+      width: 84px;
+      height: 84px;
+      border-radius: 22px;
+      box-shadow: 0 12px 28px rgba(2, 62, 138, 0.22);
+      animation: splashPulse 1.8s ease-in-out infinite;
+    }
+    .pwa-splash-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #023e8a;
+    }
+    .pwa-splash-sub {
+      font-size: 0.8rem;
+      color: #475569;
+    }
+    @keyframes splashPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* ปุ่มลอยช่วยติดตั้งแอป (ซ่อนอัตโนมัติเมื่อเปิดจากแอปที่ติดตั้งแล้ว) */
+    .pwa-float-bar {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 40;
+      background: linear-gradient(135deg, #023e8a, #0077b6);
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 6px 8px 6px 14px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 10px 26px rgba(2, 62, 138, 0.35);
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+    }
+    .pwa-float-bar.show {
+      display: inline-flex;
+      animation: floatSlideUp 0.35s ease both;
+    }
+    @keyframes floatSlideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .pwa-float-btn {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 2px;
+    }
+    .pwa-float-btn img {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: #ffffff;
+    }
+    .pwa-float-close {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* หน้าต่างแนะนำการติดตั้งสำหรับ iPhone/iPad หรือเบราว์เซอร์ที่ยังไม่ขึ้นปุ่มอัตโนมัติ */
+    .pwa-guide-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      background: rgba(15, 23, 42, 0.58);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .pwa-guide-backdrop.show {
+      display: flex;
+    }
+    .pwa-guide-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 24px 50px rgba(2, 62, 138, 0.3);
+      color: #0f172a;
+      text-align: center;
+    }
+    .pwa-guide-box img {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(2, 62, 138, 0.18);
+      margin-bottom: 10px;
+    }
+    .pwa-guide-box h3 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      color: #023e8a;
+    }
+    .pwa-guide-steps {
+      text-align: left;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 0.83rem;
+      line-height: 1.65;
+      color: #334155;
+      margin: 12px 0 16px;
+    }
+    .pwa-guide-close-btn {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 11px;
+      background: linear-gradient(135deg, #023e8a, #0077b6);
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
+
+  <!-- หน้าจอโหลดระหว่างเปิดเว็บแอป -->
+  <div class="pwa-splash" id="pwaSplash">
+    <img src="https://i.postimg.cc/0NzjtVx3/logo-Web-App-th-t-dt-ngpe-n-PWA.png" alt="SWL-LAB CONNECT">
+    <div class="pwa-splash-title">SWL-LAB CONNECT</div>
+    <div class="pwa-splash-sub">กำลังเชื่อมต่อระบบห้องปฏิบัติการ โรงพยาบาลศรีวิไล...</div>
+  </div>
+
+  <!-- กรอบแสดงเว็บแอป Google Apps Script -->
   <iframe
-    src="https://script.google.com/macros/s/AKfycbzuiia9BHt-Hv4txwpQgauVCNqmPRvILDFIcbqzJaDQnhY2OHoFMMnicBy3W_nECux4/exec"
+    id="gasAppFrame"
+    src="วางลิงก์_WEB_APP_URL_ของคุณที่นี่"
     allow="clipboard-read; clipboard-write"
     allowfullscreen>
   </iframe>
 
+  <!-- ปุ่มลอยติดตั้งแอปลงหน้าจอโฮม -->
+  <div class="pwa-float-bar" id="pwaFloatBar">
+    <button type="button" class="pwa-float-btn" onclick="triggerPwaInstallFlow()">
+      <img src="https://i.postimg.cc/0NzjtVx3/logo-Web-App-th-t-dt-ngpe-n-PWA.png" alt="App">
+      <span>ติดตั้งแอป SWL-LAB</span>
+    </button>
+    <button type="button" class="pwa-float-close" title="ซ่อนปุ่มนี้" onclick="dismissFloatInstallBar()">✕</button>
+  </div>
+
+  <!-- ป๊อปอัปแนะนำขั้นตอนสำหรับ iOS / Android -->
+  <div class="pwa-guide-backdrop" id="pwaGuideModal" onclick="if(event.target===this) closePwaGuideModal()">
+    <div class="pwa-guide-box">
+      <img src="https://i.postimg.cc/0NzjtVx3/logo-Web-App-th-t-dt-ngpe-n-PWA.png" alt="SWL-LAB">
+      <h3>ติดตั้งแอป SWL-LAB CONNECT ลงหน้าจอ</h3>
+      <div style="font-size:0.8rem; color:#64748b;">เปิดใช้งานได้เต็มจอพร้อมโลโก้กลุ่มงานเทคนิคการแพทย์</div>
+      <div class="pwa-guide-steps" id="pwaGuideStepsContent"></div>
+      <button type="button" class="pwa-guide-close-btn" onclick="closePwaGuideModal()">เข้าใจแล้ว / ปิดหน้าต่าง</button>
+    </div>
+  </div>
+
   <script>
+    var deferredInstallPrompt = null;
+    var isStandaloneMode =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true;
+
+    // ซ่อนหน้าจอโหลดเมื่อ iframe พร้อม (หรือสูงสุด 3.5 วินาที)
+    var gasFrame = document.getElementById('gasAppFrame');
+    function hideSplash() {
+      var sp = document.getElementById('pwaSplash');
+      if (sp) sp.classList.add('hide');
+    }
+    if (gasFrame) gasFrame.addEventListener('load', hideSplash);
+    setTimeout(hideSplash, 3500);
+
+    // ลงทะเบียน Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('./sw.js').catch(function() {});
       });
     }
+
+    function showFloatInstallBar() {
+      if (isStandaloneMode) return;
+      if (sessionStorage.getItem('swl_pwa_bar_dismissed') === '1') return;
+      var bar = document.getElementById('pwaFloatBar');
+      if (bar) bar.classList.add('show');
+    }
+
+    function dismissFloatInstallBar() {
+      sessionStorage.setItem('swl_pwa_bar_dismissed', '1');
+      var bar = document.getElementById('pwaFloatBar');
+      if (bar) bar.classList.remove('show');
+    }
+
+    // จับสัญญาณการติดตั้งแอปแบบ Native (Android / Chrome / Edge)
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      showFloatInstallBar();
+      notifyIframePwaStatus();
+    });
+
+    // หากเปิดบนมือถือ (เช่น iPhone/Safari) ให้แสดงปุ่มลอยช่วยแนะนำการติดตั้งเช่นกัน
+    window.addEventListener('load', function() {
+      var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile && !isStandaloneMode) {
+        setTimeout(showFloatInstallBar, 1200);
+      }
+    });
+
+    window.addEventListener('appinstalled', function() {
+      deferredInstallPrompt = null;
+      isStandaloneMode = true;
+      dismissFloatInstallBar();
+      notifyIframePwaStatus();
+    });
+
+    function triggerPwaInstallFlow() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then(function(choice) {
+          if (choice && choice.outcome === 'accepted') {
+            dismissFloatInstallBar();
+          }
+          deferredInstallPrompt = null;
+          notifyIframePwaStatus();
+        });
+        return;
+      }
+
+      // แสดงคู่มือตรงรุ่นสำหรับ iOS / Android
+      var ua = navigator.userAgent || '';
+      var isIOS = /iPhone|iPad|iPod/i.test(ua);
+      var stepsEl = document.getElementById('pwaGuideStepsContent');
+
+      if (isIOS) {
+        stepsEl.innerHTML =
+          '<b>🍎 สำหรับ iPhone / iPad (ต้องเปิดใน Safari):</b><br>' +
+          '1. หากเปิดจาก LINE ให้กดมุมขวาล่างแล้วเลือก <b>เปิดใน Safari</b> ก่อน<br>' +
+          '2. แตะปุ่ม <b>แชร์ (สี่เหลี่ยมมีลูกศรชี้ขึ้น)</b> ด้านล่างหน้าจอ<br>' +
+          '3. เลือก <b>เพิ่มไปยังหน้าจอโฮม (Add to Home Screen)</b><br>' +
+          '4. กดปุ่ม <b>เพิ่ม (Add)</b> โลโก้กลุ่มงานจะปรากฏบนหน้าจอทันที';
+      } else {
+        stepsEl.innerHTML =
+          '<b>🤖 สำหรับ Android / คอมพิวเตอร์ (Chrome / Edge):</b><br>' +
+          '1. หากเปิดจาก LINE ให้กดจุด 3 จุดแล้วเลือก <b>เปิดใน Chrome</b> ก่อน<br>' +
+          '2. แตะจุด 3 จุด (<b>⋮</b>) มุมขวาบนของเบราว์เซอร์<br>' +
+          '3. เลือก <b>ติดตั้งแอป (Install app)</b> หรือ <b>เพิ่มลงในหน้าจอหลัก</b><br>' +
+          '4. กดยืนยัน <b>ติดตั้ง</b> เพื่อสร้างไอคอนแอปบนหน้าจอ';
+      }
+
+      document.getElementById('pwaGuideModal').classList.add('show');
+    }
+
+    function closePwaGuideModal() {
+      document.getElementById('pwaGuideModal').classList.remove('show');
+    }
+
+    function notifyIframePwaStatus() {
+      try {
+        if (gasFrame && gasFrame.contentWindow) {
+          gasFrame.contentWindow.postMessage({
+            type: 'SWL_PWA_STATUS',
+            canNativePrompt: !!deferredInstallPrompt,
+            isStandalone: isStandaloneMode
+          }, '*');
+        }
+      } catch (e) {}
+    }
+
+    // รับคำสั่งจากปุ่ม "ติดตั้งแอปบนมือถือ" ภายในระบบ SWL-LAB CONNECT
+    window.addEventListener('message', function(ev) {
+      if (!ev || !ev.data || typeof ev.data !== 'object') return;
+      if (ev.data.type === 'SWL_TRIGGER_PWA_INSTALL') {
+        triggerPwaInstallFlow();
+      } else if (ev.data.type === 'SWL_CHECK_PWA_STATUS') {
+        notifyIframePwaStatus();
+      }
+    });
   </script>
 </body>
 </html>
