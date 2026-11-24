@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>SWL-LAB CONNECT</title>
+
+  <!-- ตั้งค่า PWA & โลโก้สำหรับทั้ง Android และ iOS -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/0NzjtVx3/logo-Web-App-th-t-dt-ngpe-n-PWA.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://i.postimg.cc/0NzjtVx3/logo-Web-App-th-t-dt-ngpe-n-PWA.png">
+  <meta name="theme-color" content="#023e8a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SWL-LAB">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #eaf2fa;
+    }
+    iframe {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <iframe
+    src="https://script.google.com/macros/s/AKfycbzuiia9BHt-Hv4txwpQgauVCNqmPRvILDFIcbqzJaDQnhY2OHoFMMnicBy3W_nECux4/exec"
+    allow="clipboard-read; clipboard-write"
+    allowfullscreen>
+  </iframe>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js').catch(function() {});
+      });
+    }
+  </script>
+</body>
+</html>
